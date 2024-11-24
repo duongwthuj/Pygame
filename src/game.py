@@ -20,12 +20,12 @@ class Game:
     def import_assets(self):
         self.level_frames = {
             'flag': import_folder('..', 'graphics', 'level', 'flag'),
-            'palms': import_folder('..', 'graphics', 'level', 'palms'),
+            'palms': import_sub_folders('..', 'graphics', 'level', 'palms'),
             'candle': import_folder('..', 'graphics', 'level', 'candle'),
             'window': import_folder('..', 'graphics', 'level', 'window'),
-            'small_chains': import_folder('..', 'graphics', 'level', 'small chains'),
-            'big_chains': import_folder('..', 'graphics', 'level', 'big chains'),
-            'candle light': import_folder('..', 'graphics', 'level', 'candle light'),
+            'small_chain': import_folder('..', 'graphics', 'level', 'small_chains'),
+            'big_chain': import_folder('..', 'graphics', 'level', 'big_chains'),
+            'candle_light': import_folder('..', 'graphics', 'level', 'candle light'),
             'helicopter': import_folder('..', 'graphics', 'level', 'helicopter'),
             'water_top': import_folder('..', 'graphics', 'level', 'water', 'top'),
             'water_body': import_image('..', 'graphics', 'level', 'water', 'body'),
@@ -44,8 +44,8 @@ class Game:
             'pearl': import_image('..', 'graphics', 'enemies', 'bullets', 'pearl'),
             'items': import_sub_folders('..', 'graphics', 'items'),
             'particle': import_folder('..', 'graphics', 'effects', 'particle'),
-
         }
+
 
     def run(self):
         while True:
@@ -54,5 +54,5 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            self.current_state.run(0.1)
+            self.current_state.run(0.06)
             pygame.display.update()

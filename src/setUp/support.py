@@ -32,6 +32,6 @@ def import_sub_folders(*path):
     for _, sub_folders, _ in walk(join(*path)):
         if sub_folders:
             for sub_folder in sub_folders:
-                frames[sub_folder] = import_folder_dict(*path, sub_folder)
+                frames[sub_folder] = import_folder(*path, sub_folder)
     return frames
 
