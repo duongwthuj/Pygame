@@ -1,6 +1,6 @@
-from sprites import Sprite
+from Pygame.src.Sprite.sprites import Sprite
 import pygame
-from settings import *
+from Pygame.src.setUp.settings import *
 
 
 class MovingSprite(Sprite):

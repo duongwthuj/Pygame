@@ -1,9 +1,9 @@
-from movingSprite import MovingSprite
-from settings import *
-from sprites import Sprite
-from player import Player
-from groups import AllSprites
-from animatedSprite import AnimatedSprite
+from Pygame.src.Sprite.movingSprite import MovingSprite
+from Pygame.src.setUp.settings import *
+from Pygame.src.Sprite.sprites import Sprite
+from Pygame.src.objPlay.player import Player
+from Pygame.src.Sprite.groups import AllSprites
+from Pygame.src.Sprite.animatedSprite import AnimatedSprite
 
 
 class Level:

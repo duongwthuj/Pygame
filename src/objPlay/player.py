@@ -1,6 +1,6 @@
 import pygame
-from settings import *
-from timer import Timer
+from Pygame.src.setUp.settings import *
+from Pygame.src.setUp.timer import Timer
 from os.path import join
 
 
