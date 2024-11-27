@@ -14,7 +14,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.import_assets()
 
-        self.tmx_maps = {0: load_pygame(join('..', 'data', 'levels', 'omni.tmx'))}
+        self.tmx_maps = {0: load_pygame(join('..', 'data', 'levels', '1.tmx'))}
         self.current_state = Level(self.tmx_maps[0], self.level_frames)
 
     def import_assets(self):
@@ -29,7 +29,7 @@ class Game:
             'helicopter': import_folder('..', 'graphics', 'level', 'helicopter'),
             'water_top': import_folder('..', 'graphics', 'level', 'water', 'top'),
             'water_body': import_image('..', 'graphics', 'level', 'water', 'body'),
-            'bg_tiles': import_folder_dict('..', 'graphics', 'level', 'bg tiles'),
+            'bg_tiles': import_folder_dict('..', 'graphics', 'level', 'bg', 'tiles'),
             'cloud_small': import_folder('..', 'graphics', 'level', 'clouds', 'small'),
             'cloud_large': import_image('..', 'graphics', 'level', 'clouds', 'large_cloud'),
             'saw': import_folder('..', 'graphics', 'enemies', 'saw', 'animation'),

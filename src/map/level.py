@@ -1,4 +1,5 @@
 from math import radians
+from tarfile import data_filter
 
 from Pygame.src.Sprite.movingSprite import MovingSprite
 from Pygame.src.setUp.settings import *
@@ -11,10 +12,29 @@ from Pygame.src.Sprite.spike import Spike
 class Level:
     def __init__(self, tmx_map, level_frames):
         self.display_surface = pygame.display.get_surface()
-        self.all_sprites = AllSprites()
+
+
+        #level data
+        self.level_width = tmx_map.width * TILE_SIZE
+        self.level_bottom = tmx_map.width * TILE_SIZE
+        tmx_level_properties = tmx_map.get_layer_by_name('Data')[0].properties
+        if tmx_level_properties['bg']:
+            bg_tile = level_frames['bg_tiles'][tmx_level_properties['bg']]
+        else:
+            bg_tile = None
+
+        #groups
+        self.all_sprites = AllSprites(
+            width = tmx_map.width,
+            height = tmx_map.height,
+            bg_tile = bg_tile,
+            top_limit = tmx_level_properties['top_limit'],
+            clouds = {'large': level_frames['cloud_large'], 'small': level_frames['cloud_small']},
+            horizon_line = tmx_level_properties['horizon_line']
+        )
         self.collision_sprites = pygame.sprite.Group()
         self.damage_sprites = pygame.sprite.Group()
-        self.sem_collision_sprites = pygame.sprite.Group()  # collison sprites other
+        self.sem_collision_sprites = pygame.sprite.Group()  # collision sprites other
         self.setup(tmx_map, level_frames)
 
     def setup(self, tmx_map, level_frames):
@@ -60,8 +80,9 @@ class Level:
                         frames = level_frames['palms'][obj.name]
                         z = Z_LAYER['main'] if not 'bg' in obj.name else Z_LAYER['bg details']
                         AnimatedSprite((obj.x, obj.y), frames, (self.all_sprites), z)
-
-
+            #level finish
+            if obj.name == 'flag':
+                self.level_finish_rect = pygame.FRect((obj.x, obj.y), (obj.width, obj.height))
 
         # bg details
         for obj in tmx_map.get_layer_by_name("BG details"):
@@ -122,8 +143,36 @@ class Level:
                         for y in range(top, bottom, 20):
                             Sprite((x, y), level_frames['saw_chain'], self.all_sprites, Z_LAYER['bg details'])
 
+        #water
+        for obj in tmx_map.get_layer_by_name("Water"):
+            rows = int(obj.height / TILE_SIZE)
+            cols = int(obj.width / TILE_SIZE)
+            for row in range(rows):
+                for col in range(cols):
+                    x = obj.x + col * TILE_SIZE
+                    y = obj.y + row * TILE_SIZE
+                    if row == 0:
+                        AnimatedSprite((x, y), level_frames['water_top'], (self.all_sprites), Z_LAYER['water'])
+                    else:
+                        Sprite((x, y), level_frames['water_body'], (self.all_sprites), Z_LAYER['water'])
+
+    def check_constraint(self):  # check if player is out of screen
+        #left right
+        if self.player.hitbox_rect.left <= 0:
+            self.player.hitbox_rect.left = 0
+        if self.player.hitbox_rect.right >= self.level_width:
+            self.player.hitbox_rect.right = self.level_width
+
+        #bottom
+        if self.player.hitbox_rect.bottom > self.level_bottom:
+            pass
+
+        #success
+        if self.player.hitbox_rect.colliderect(self.level_finish_rect):
+            print('success')
 
     def run(self, dt):
         self.display_surface.fill('black')
         self.all_sprites.update(dt)
-        self.all_sprites.draw(self.player.hitbox_rect.center)
+        self.all_sprites.draw(self.player.hitbox_rect.center, dt)
+        self.check_constraint()
