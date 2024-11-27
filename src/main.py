@@ -7,4 +7,3 @@ if __name__ == "__main__":
 #TODO:
 # + Sửa lại moving obj up down (đ nhảy được)
 # + Set lại delta time cho game
-# + Bắt đầu làm enemy

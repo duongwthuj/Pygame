@@ -1,8 +1,11 @@
+import pygame.transform
+
 from Pygame.src.setUp.settings import *
 from Pygame.src.map.level import Level
 from pytmx.util_pygame import load_pygame
 from os.path import join
 from Pygame.src.setUp.support import *
+from Pygame.src.map.overworld import Overworld
 
 
 class Game:
@@ -14,8 +17,10 @@ class Game:
         self.clock = pygame.time.Clock()
         self.import_assets()
 
-        self.tmx_maps = {0: load_pygame(join('..', 'data', 'levels', '1.tmx'))}
+        self.tmx_maps = {0: load_pygame(join('..', 'data', 'levels', 'omni.tmx'))}
+        self.tmx_overworld = load_pygame(join('..', 'data', 'overworld', 'overworld.tmx'))
         self.current_state = Level(self.tmx_maps[0], self.level_frames)
+        #self.current_state = Overworld(self.tmx_overworld, self.data, self.tmx_overworld_frames)
 
     def import_assets(self):
         self.level_frames = {
@@ -45,7 +50,10 @@ class Game:
             'items': import_sub_folders('..', 'graphics', 'items'),
             'particle': import_folder('..', 'graphics', 'effects', 'particle'),
         }
-
+        self.tmx_overworld_frames = {
+            'water': import_folder('..', 'graphics', 'overworld', 'water'),
+            'palms': import_sub_folders('..', 'graphics', 'overworld', 'palm'),
+        }
 
     def run(self):
         while True:
