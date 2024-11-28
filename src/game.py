@@ -1,12 +1,12 @@
-import pygame.transform
-
+from Pygame.src.debug import debug
 from Pygame.src.setUp.settings import *
 from Pygame.src.map.level import Level
 from pytmx.util_pygame import load_pygame
 from os.path import join
 from Pygame.src.setUp.support import *
 from Pygame.src.map.overworld import Overworld
-
+from Pygame.src.data import Data
+from Pygame.src.ui.ui import UI
 
 class Game:
     def __init__(self):
@@ -17,9 +17,11 @@ class Game:
         self.clock = pygame.time.Clock()
         self.import_assets()
 
+        self.ui = UI(self.font, self.ui_frames)
+        self.data = Data(self.ui)
         self.tmx_maps = {0: load_pygame(join('..', 'data', 'levels', 'omni.tmx'))}
         self.tmx_overworld = load_pygame(join('..', 'data', 'overworld', 'overworld.tmx'))
-        self.current_state = Level(self.tmx_maps[0], self.level_frames)
+        self.current_state = Level(self.tmx_maps[0], self.level_frames, self.data)
         #self.current_state = Overworld(self.tmx_overworld, self.data, self.tmx_overworld_frames)
 
     def import_assets(self):
@@ -50,6 +52,13 @@ class Game:
             'items': import_sub_folders('..', 'graphics', 'items'),
             'particle': import_folder('..', 'graphics', 'effects', 'particle'),
         }
+
+        self.font = pygame.font.Font(join('..', 'graphics', 'ui', 'runescape_uf.ttf'), 40)
+        self.ui_frames = {
+            'heart': import_folder('..', 'graphics', 'ui', 'heart'),
+            'coin': import_image('..', 'graphics', 'ui', 'coin')
+        }
+
         self.tmx_overworld_frames = {
             'water': import_folder('..', 'graphics', 'overworld', 'water'),
             'palms': import_sub_folders('..', 'graphics', 'overworld', 'palm'),
@@ -63,4 +72,8 @@ class Game:
                     pygame.quit()
                     sys.exit()
             self.current_state.run(0.06)
+            self.ui.update(0.06)
+            #debug((self.data.health))
+
             pygame.display.update()
+

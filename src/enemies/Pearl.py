@@ -10,12 +10,19 @@ class Pearl(pygame.sprite.Sprite):
         self.z = Z_LAYER['main']
         self.direction = direction
         self.speed = speed
-        self.timers = {'lifetime': Timer(5000)}
+        self.timers = {'lifetime': Timer(5000), 'reverse': Timer(250)}
         self.timers['lifetime'].activate()
+
+    def reverse(self):
+        if not self.timers['reverse'].active:
+            self.direction *= -1
+            self.timers['reverse'].activate()
+
 
     def update(self, dt):
         for timer in self.timers.values():
             timer.update()
+
         self.rect.x += self.direction * self.speed * dt
         if not self.timers['lifetime'].active:
             self.kill()

@@ -1,5 +1,6 @@
 from Pygame.src.setUp.settings import *
 from random import choice
+from Pygame.src.setUp.timer import Timer
 
 class Tooth(pygame.sprite.Sprite):
     def __init__(self, pos, frames, groups, collision_sprites):
@@ -8,12 +9,21 @@ class Tooth(pygame.sprite.Sprite):
         self.image = self.frames[self.frame_index]
         self.rect = self.image.get_frect(topleft=pos)
         self.z = Z_LAYER['main']
-        self.speed = 200
 
+        self.speed = 200
         self.direction = choice((-1,1))
         self.collision_rects = [sprite.rect for sprite in collision_sprites]
 
+        self.hit_timer = Timer(250)
+
+    def reverse(self):
+        if not self.hit_timer.active:
+            self.direction *= -1
+            self.hit_timer.activate()
+
     def update(self, dt):
+        self.hit_timer.update()
+
         #animate
         self.frame_index += ANIMATION_SPEED * dt
         self.image = self.frames[int(self.frame_index % len(self.frames))]

@@ -1,4 +1,5 @@
 from Pygame.src.Sprite.movingSprite import MovingSprite
+from Pygame.src.Sprite.particleEffectSprite import ParticleEffectSprite
 from Pygame.src.enemies.Pearl import Pearl
 from Pygame.src.setUp.settings import *
 from Pygame.src.Sprite.sprites import Sprite
@@ -8,10 +9,12 @@ from Pygame.src.Sprite.animatedSprite import AnimatedSprite
 from Pygame.src.Sprite.spike import Spike
 from Pygame.src.enemies.Tooth import Tooth
 from Pygame.src.enemies.Shell import Shell
+from Pygame.src.Sprite.item import Item
 
 class Level:
-    def __init__(self, tmx_map, level_frames):
+    def __init__(self, tmx_map, level_frames, data):
         self.display_surface = pygame.display.get_surface()
+        self.data = data
 
         #level data
         self.level_width = tmx_map.width * TILE_SIZE
@@ -36,11 +39,13 @@ class Level:
         self.tooth_sprites = pygame.sprite.Group()
         self.pearl_sprites = pygame.sprite.Group()
         self.sem_collision_sprites = pygame.sprite.Group()  # collision sprites other
+        self.item_sprites = pygame.sprite.Group()
 
         self.setup(tmx_map, level_frames)
 
         # frames
         self.pearl_surf = level_frames['pearl']
+        self.particle_frames = level_frames['particle']
 
     def setup(self, tmx_map, level_frames):
         # tiles
@@ -70,7 +75,8 @@ class Level:
                     groups = self.all_sprites,
                     collision_sprites= self.collision_sprites,
                     sem_collision_sprites=self.sem_collision_sprites,
-                    frames = level_frames['player'])
+                    frames = level_frames['player'],
+                    data = self.data)
             else:
                 if obj.name in ('barrel', 'crate'):
                     Sprite((obj.x, obj.y), obj.image, (self.all_sprites, self.collision_sprites))
@@ -79,8 +85,7 @@ class Level:
                         frames = level_frames[obj.name]
                         if obj.name == 'floor_spike' and obj.properties['inverted']:
                             frames = [pygame.transform.flip(frame, False, True) for frame in frames]
-                        AnimatedSprite((obj.x, obj.y), frames, (self.all_sprites))
-
+                        AnimatedSprite((obj.x, obj.y), frames, (self.all_sprites, self.damage_sprites))
                     else:
                         frames = level_frames['palms'][obj.name]
                         z = Z_LAYER['main'] if not 'bg' in obj.name else Z_LAYER['bg details']
@@ -160,6 +165,11 @@ class Level:
                     reverse = obj.properties['reverse'],
                     player = self.player,
                     create_pearl = self.create_pearl)
+
+        #items
+        for obj in tmx_map.get_layer_by_name("Items"):
+            Item(obj.name, (obj.x + TILE_SIZE / 2, obj.y + TILE_SIZE / 2), level_frames['items'][obj.name], (self.all_sprites, self.item_sprites), self.data)
+
         #water
         for obj in tmx_map.get_layer_by_name("Water"):
             rows = int(obj.height / TILE_SIZE)
@@ -178,14 +188,31 @@ class Level:
 
     def pearl_collision(self):
         for sprite in self.collision_sprites:
-            pygame.sprite.spritecollide(sprite, self.pearl_sprites, True)
+            sprite = pygame.sprite.spritecollide(sprite, self.pearl_sprites, True)
+            if sprite:
+                ParticleEffectSprite((sprite[0].rect.center), self.particle_frames, self.all_sprites)
 
     def hit_collision(self):
         for sprite in self.damage_sprites:
             if sprite.rect.colliderect(self.player.hitbox_rect):
-                print('hit')
+                self.player.get_damage()
+                ParticleEffectSprite((sprite.rect.center), self.particle_frames, self.all_sprites)
                 if hasattr(sprite, 'pearl'): # check if sprite has pearl attribute
                     sprite.kill()
+
+    def item_collision(self):
+        if self.item_sprites:
+            item_sprites = pygame.sprite.spritecollide(self.player, self.item_sprites, True)
+            if item_sprites:
+                item_sprites[0].activate()
+                ParticleEffectSprite((item_sprites[0].rect.center), self.particle_frames, self.all_sprites)
+
+    def attack_collision(self):
+        for target in self.pearl_sprites.sprites() + self.tooth_sprites.sprites():
+            facing_target = self.player.rect.centerx < target.rect.centerx and self.player.facing_right or \
+                            self.player.rect.centerx > target.rect.centerx and not self.player.facing_right
+            if target.rect.colliderect(self.player.rect) and self.player.attacking and facing_target: # contain the sword
+                target.reverse()
 
     def check_constraint(self):  # check if player is out of screen
         #left right
@@ -207,6 +234,8 @@ class Level:
         self.all_sprites.update(dt)
         self.pearl_collision()
         self.hit_collision()
+        self.item_collision()
+        self.attack_collision()
 
         self.all_sprites.draw(self.player.hitbox_rect.center, dt)
         self.check_constraint()
