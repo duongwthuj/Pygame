@@ -40,7 +40,7 @@ class MovingSprite(AnimatedSprite):
             if self.rect.top <= self.start_pos[1] and self.direction.y == -1:
                 self.direction.y = 1
                 self.rect.top = self.start_pos[1]
-            self.reverse['y'] = True if self.direction.y < 0 else False
+            self.reverse['y'] = True if self.direction.y > 0 else False
 
     def update(self, dt):
         self.old_rect = self.rect.copy()

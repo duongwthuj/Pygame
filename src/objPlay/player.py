@@ -1,57 +1,63 @@
-import pygame
 from Pygame.src.setUp.settings import *
 from Pygame.src.setUp.timer import Timer
-from os.path import join
 from math import sin
 
+
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, collision_sprites, sem_collision_sprites, frames, data):
-        #generate setup
+    def __init__(self, pos, groups, collision_sprites, sem_collision_sprites, frames, data, attack_sound, jump_sound):
+        # general setup
         super().__init__(groups)
         self.z = Z_LAYER['main']
         self.data = data
 
-        #load image
+        # image
         self.frames, self.frame_index = frames, 0
         self.state, self.facing_right = 'idle', True
         self.image = self.frames[self.state][self.frame_index]
 
-        # rect
-        self.rect = self.image.get_rect(topleft=pos)
+        # rects
+        self.rect = self.image.get_frect(topleft=pos)
         self.hitbox_rect = self.rect.inflate(-76, -36)
         self.old_rect = self.hitbox_rect.copy()
 
-        # movement
-        self.direction = pygame.math.Vector2()
-        self.speed = 80  # Increased speed for noticeable movement
-        self.gravity = 100
+
+        self.direction = vector()
+        self.speed = 400
+        self.gravity = 1300
         self.jump = False
-        self.jump_height = 200
+        self.jump_height = 700
         self.attacking = False
+        self.damage_cooldown = 2000  # thời gian hồi (ms)
+        self.last_damage_time = 0 # thời điểm nhận sát thương cuối
 
         # collision
-        self.sem_collision_sprites = sem_collision_sprites
         self.collision_sprites = collision_sprites
+        self.sem_collision_sprites = sem_collision_sprites
         self.on_surface = {'floor': False, 'left': False, 'right': False}
         self.platform = None
-        self.display_surface = pygame.display.get_surface()
 
         # timer
         self.timers = {
             'wall jump': Timer(400),
             'wall slide block': Timer(250),
             'platform skip': Timer(100),
-            'attack cooldown': Timer(500),
+            'attack block': Timer(500),
             'hit': Timer(400)
         }
+
+        # audio
+        self.attack_sound = attack_sound
+        self.jump_sound = jump_sound
 
     def input(self):
         keys = pygame.key.get_pressed()
         input_vector = vector(0, 0)
         if not self.timers['wall jump'].active:
+
             if keys[pygame.K_RIGHT]:
                 input_vector.x += 1
                 self.facing_right = True
+
             if keys[pygame.K_LEFT]:
                 input_vector.x -= 1
                 self.facing_right = False
@@ -67,16 +73,24 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE]:
             self.jump = True
 
+    def attack(self):
+        if not self.timers['attack block'].active:
+            self.attacking = True
+            self.frame_index = 0
+            self.timers['attack block'].activate()
+            self.attack_sound.play()
+
     def move(self, dt):
         # horizontal
         self.hitbox_rect.x += self.direction.x * self.speed * dt
+
         self.collision('horizontal')
 
         # vertical
         if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not \
         self.timers['wall slide block'].active:
             self.direction.y = 0
-            self.hitbox_rect.y += self.gravity / 3 * dt
+            self.hitbox_rect.y += self.gravity / 10 * dt
         else:
             self.direction.y += self.gravity / 2 * dt
             self.hitbox_rect.y += self.direction.y * dt
@@ -87,24 +101,18 @@ class Player(pygame.sprite.Sprite):
                 self.direction.y = -self.jump_height
                 self.timers['wall slide block'].activate()
                 self.hitbox_rect.bottom -= 1
-
+                self.jump_sound.play()
             elif any((self.on_surface['left'], self.on_surface['right'])) and not self.timers[
                 'wall slide block'].active:
                 self.timers['wall jump'].activate()
                 self.direction.y = -self.jump_height
                 self.direction.x = 1 if self.on_surface['left'] else -1
-
+                self.jump_sound.play()
             self.jump = False
 
         self.collision('vertical')
-        self.semi_collision()
+        self.sem_collision()
         self.rect.center = self.hitbox_rect.center
-
-    def attack(self):
-        if not self.timers['attack cooldown'].active:
-            self.attacking = True
-            self.frame_index = 0 #Phải reset frame_index về 0 khi tấn công
-            self.timers['attack cooldown'].activate()
 
     def platform_move(self, dt):
         if self.platform:
@@ -117,11 +125,11 @@ class Player(pygame.sprite.Sprite):
         left_rect = pygame.Rect(self.hitbox_rect.topleft + vector(-2, self.hitbox_rect.height / 4),
                                 (2, self.hitbox_rect.height / 2))
         collide_rects = [sprite.rect for sprite in self.collision_sprites]
-        semi_collide_rect = [sprite.rect for sprite in self.sem_collision_sprites]
+        sem_collide_rect = [sprite.rect for sprite in self.sem_collision_sprites]
 
         # collisions
         self.on_surface['floor'] = True if floor_rect.collidelist(collide_rects) >= 0 or floor_rect.collidelist(
-            semi_collide_rect) >= 0 and self.direction.y >= 0 else False
+            sem_collide_rect) >= 0 and self.direction.y >= 0 else False
         self.on_surface['right'] = True if right_rect.collidelist(collide_rects) >= 0 else False
         self.on_surface['left'] = True if left_rect.collidelist(collide_rects) >= 0 else False
 
@@ -158,7 +166,7 @@ class Player(pygame.sprite.Sprite):
                         self.hitbox_rect.bottom = sprite.rect.top
                     self.direction.y = 0
 
-    def semi_collision(self):
+    def sem_collision(self):
         if not self.timers['platform skip'].active:
             for sprite in self.sem_collision_sprites:
                 if sprite.rect.colliderect(self.hitbox_rect):
@@ -167,7 +175,7 @@ class Player(pygame.sprite.Sprite):
                         if self.direction.y > 0:
                             self.direction.y = 0
 
-    def update_timer(self):
+    def update_timers(self):
         for timer in self.timers.values():
             timer.update()
 
@@ -186,15 +194,12 @@ class Player(pygame.sprite.Sprite):
             if self.attacking:
                 self.state = 'attack'
             else:
-                if self.direction.x == 0:
-                    self.state = 'idle'
-                else:
-                    self.state = 'run'
+                self.state = 'idle' if self.direction.x == 0 else 'run'
         else:
             if self.attacking:
                 self.state = 'air_attack'
             else:
-                if self.on_surface['left'] or self.on_surface['right']:
+                if any((self.on_surface['left'], self.on_surface['right'])):
                     self.state = 'wall'
                 else:
                     self.state = 'jump' if self.direction.y < 0 else 'fall'
@@ -206,14 +211,14 @@ class Player(pygame.sprite.Sprite):
 
     def flicker(self):
         if self.timers['hit'].active and sin(pygame.time.get_ticks() * 100) >= 0:
-            white_mask =pygame.mask.from_surface(self.image)
+            white_mask = pygame.mask.from_surface(self.image)
             white_surf = white_mask.to_surface()
             white_surf.set_colorkey('black')
             self.image = white_surf
 
     def update(self, dt):
         self.old_rect = self.hitbox_rect.copy()
-        self.update_timer()
+        self.update_timers()
 
         self.input()
         self.move(dt)

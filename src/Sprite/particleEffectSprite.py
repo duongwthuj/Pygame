@@ -1,6 +1,7 @@
 from Pygame.src.Sprite.animatedSprite import AnimatedSprite
 from Pygame.src.setUp.settings import *
 
+
 class ParticleEffectSprite(AnimatedSprite):
     def __init__(self, pos, frames, groups):
         super().__init__(pos, frames, groups)

@@ -2,6 +2,7 @@ from Pygame.src.Sprite.animatedSprite import AnimatedSprite
 from random import randint
 from Pygame.src.setUp.settings import *
 
+
 class Heart(AnimatedSprite):
     def __init__(self, pos, frames, groups):
         super().__init__(pos, frames, groups)
@@ -19,6 +20,5 @@ class Heart(AnimatedSprite):
         if self.active:
             self.animate(dt)
         else:
-            if randint(0, 1000) == 1: # chance of heart animation
+            if randint(0, 2000) == 1:
                 self.active = True
-                self.frame_index = 0

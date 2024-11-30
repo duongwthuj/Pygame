@@ -2,10 +2,11 @@ from Pygame.src.setUp.settings import *
 from Pygame.src.Sprite.sprites import Sprite
 from random import randint as ranint
 
+
 class Cloud(Sprite):
-    def __init__ (self, pos, surf, groups, z = Z_LAYER['clouds']):
+    def __init__(self, pos, surf, groups, z=Z_LAYER['clouds']):
         super().__init__(pos, surf, groups, z)
-        self.speed = ranint(50,120)
+        self.speed = ranint(50, 120)
         self.direction = -1
         self.rect.midbottom = pos
 
