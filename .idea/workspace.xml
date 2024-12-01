@@ -5,9 +5,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="be483cc3-14b3-4d80-b912-4a92b93354e0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/animatedSprite.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/animatedSprite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/clouds.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/clouds.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/groups.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/groups.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/icon.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/icon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/item.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/movingSprite.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/movingSprite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/node.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/node.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/particleEffectSprite.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/particleEffectSprite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/pathSprite.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/pathSprite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/spike.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/spike.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/sprites.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/sprites.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/Sprite/worldSprites.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/Sprite/worldSprites.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/enemies/Pearl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/enemies/Pearl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/enemies/Shell.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/enemies/Shell.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/enemies/Tooth.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/enemies/Tooth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pygame/src/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pygame/src/map/level.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/map/level.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/map/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/map/menu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/map/overworld.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/map/overworld.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/objPlay/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/objPlay/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/setUp/support.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/setUp/support.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/ui/heart.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/ui/heart.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pygame/src/ui/ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pygame/src/ui/ui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +53,20 @@
       </GitPushTagMode>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/Pygame" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;duongwthuj&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/duongwthuj/Pygame.git&quot;,
+    &quot;accountId&quot;: &quot;536a72d7-90c2-4d67-835f-5ebbf1ea3dde&quot;
+  }
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -47,14 +84,21 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python.Pearl.executor&quot;: &quot;Run&quot;,
+    &quot;Python.animatedSprite.executor&quot;: &quot;Run&quot;,
+    &quot;Python.game.executor&quot;: &quot;Run&quot;,
     &quot;Python.level.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
     &quot;Python.movingSprite.executor&quot;: &quot;Run&quot;,
+    &quot;Python.overworld.executor&quot;: &quot;Run&quot;,
     &quot;Python.player.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/Desktop/btl python&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Admin/Desktop/Super-Pirate-World&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -71,10 +115,35 @@
       <command value="hitBox_rect" />
     </option>
   </component>
+  <component name="RunManager">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (pythonProject)" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Pygame/src" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pygame/src/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-c69650fc56ca-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.15619.17" />
+        <option value="bundled-python-sdk-fb887030ada0-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.21565.199" />
       </set>
     </attachedChunks>
   </component>
@@ -86,8 +155,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1732214961451</updated>
+      <workItem from="1733049675012" duration="308000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
