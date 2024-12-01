@@ -4,11 +4,12 @@ from math import sin
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, collision_sprites, sem_collision_sprites, frames, data, attack_sound, jump_sound):
+    def __init__(self, pos, groups, collision_sprites, sem_collision_sprites, frames, data, attack_sound, jump_sound, paused=False):
         # general setup
         super().__init__(groups)
         self.z = Z_LAYER['main']
         self.data = data
+        self.paused = paused
 
         # image
         self.frames, self.frame_index = frames, 0
@@ -87,32 +88,33 @@ class Player(pygame.sprite.Sprite):
         self.collision('horizontal')
 
         # vertical
-        if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not \
-        self.timers['wall slide block'].active:
-            self.direction.y = 0
-            self.hitbox_rect.y += self.gravity / 10 * dt
-        else:
-            self.direction.y += self.gravity / 2 * dt
-            self.hitbox_rect.y += self.direction.y * dt
-            self.direction.y += self.gravity / 2 * dt
+        if not self.paused:
+            if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not \
+            self.timers['wall slide block'].active:
+                self.direction.y = 0
+                self.hitbox_rect.y += self.gravity / 10 * dt
+            else:
+                self.direction.y += self.gravity / 2 * dt
+                self.hitbox_rect.y += self.direction.y * dt
+                self.direction.y += self.gravity / 2 * dt
 
-        if self.jump:
-            if self.on_surface['floor']:
-                self.direction.y = -self.jump_height
-                self.timers['wall slide block'].activate()
-                self.hitbox_rect.bottom -= 1
-                self.jump_sound.play()
-            elif any((self.on_surface['left'], self.on_surface['right'])) and not self.timers[
-                'wall slide block'].active:
-                self.timers['wall jump'].activate()
-                self.direction.y = -self.jump_height
-                self.direction.x = 1 if self.on_surface['left'] else -1
-                self.jump_sound.play()
-            self.jump = False
+            if self.jump:
+                if self.on_surface['floor']:
+                    self.direction.y = -self.jump_height
+                    self.timers['wall slide block'].activate()
+                    self.hitbox_rect.bottom -= 1
+                    self.jump_sound.play()
+                elif any((self.on_surface['left'], self.on_surface['right'])) and not self.timers[
+                    'wall slide block'].active:
+                    self.timers['wall jump'].activate()
+                    self.direction.y = -self.jump_height * 1.2
+                    self.direction.x = 1 if self.on_surface['left'] else -1
+                    self.jump_sound.play()
+                self.jump = False
 
-        self.collision('vertical')
-        self.sem_collision()
-        self.rect.center = self.hitbox_rect.center
+            self.collision('vertical')
+            self.sem_collision()
+            self.rect.center = self.hitbox_rect.center
 
     def platform_move(self, dt):
         if self.platform:
@@ -221,8 +223,10 @@ class Player(pygame.sprite.Sprite):
         self.update_timers()
 
         self.input()
-        self.move(dt)
-        self.platform_move(dt)
+        print(self.gravity)
+        if not self.paused:
+            self.move(dt)
+            self.platform_move(dt)
         self.check_contact()
 
         self.get_state()

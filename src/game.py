@@ -7,6 +7,7 @@ from Pygame.src.setUp.support import *
 from Pygame.src.map.overworld import Overworld
 from Pygame.src.data import Data
 from Pygame.src.ui.ui import UI
+from Pygame.src.map.menu import Menu
 
 
 class Game:
@@ -32,18 +33,35 @@ class Game:
             5: load_pygame(join('..', 'data', 'levels', '5.tmx')),
         }
 
-        self.current_stage = Overworld(self.tmx_overworld, self.data, self.overworld_frames, self.switch_stage)
         self.bg_music.play(-1)
 
-    def switch_stage(self, target, unlock = 0):
+    def switch_stage(self, target, unlock=0, saved_pos = None):
         if target == 'level':
-            self.current_stage = Level(self.tmx_maps[self.data.current_level], self.level_frames, self.audio_files, self.data, self.switch_stage)
-        else: #overworld
-            if unlock > 0:
+            self.current_stage = Level(self.tmx_maps[self.data.current_level], self.level_frames, self.audio_files,
+                                       self.data, self.switch_stage, saved_pos)
+        elif target == 'menu':
+            self.show_menu()
+        elif target == 'overworld':
+            if unlock >= 0:
                 self.data.unlocked_level = unlock
             else:
                 self.data.health -= 1
             self.current_stage = Overworld(self.tmx_overworld, self.data, self.overworld_frames, self.switch_stage)
+        else:
+            pygame.quit()
+            sys.exit()
+
+    def show_menu(self):
+        menu = Menu()
+        menu.run()
+        if menu.selected_action == "Play":
+            self.switch_stage('overworld', 0)
+        elif menu.selected_action == "Quit":
+            pygame.quit()
+            sys.exit()
+        # elif menu.selected_action == "Options":
+        #     pygame.quit()
+        #     sys.exit()
 
     def import_assets(self):
         self.level_frames = {
@@ -103,18 +121,19 @@ class Game:
             sys.exit()
 
     def run(self):
+        self.show_menu()
         while True:
-            dt = self.clock.tick() / 1500
+            dt = self.clock.tick() / 1000
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            self.check_game_over()
-            self.current_stage.run(dt)
-            self.ui.update(dt)
-            # debug((self.data.health))
 
-            pygame.display.update()
+            self.check_game_over()  # Kiểm tra game over
+            self.current_stage.run(dt)  # Chạy màn chơi hiện tại
+            self.ui.update(dt)  # Cập nhật UI
+
+            pygame.display.update()  # Cập nhật màn hình
 
 
 

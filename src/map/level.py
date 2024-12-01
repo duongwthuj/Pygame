@@ -12,12 +12,13 @@ from Pygame.src.enemies.Tooth import Tooth
 from Pygame.src.enemies.Shell import Shell
 from Pygame.src.Sprite.item import Item
 
-
 class Level:
-    def __init__(self, tmx_map, level_frames, audio_files, data, switch_stage):
+    def __init__(self, tmx_map, level_frames, audio_files, data, switch_stage, saved):
         self.display_surface = pygame.display.get_surface()
         self.data = data
         self.switch_stage = switch_stage
+        self.paused = False
+        self.saved_player_state = saved
 
         # level data
         self.level_width = tmx_map.width * TILE_SIZE
@@ -43,6 +44,15 @@ class Level:
         self.tooth_sprites = pygame.sprite.Group()
         self.pearl_sprites = pygame.sprite.Group()
         self.item_sprites = pygame.sprite.Group()
+
+        # Đảm bảo lưu lại trạng thái ban đầu
+        self.level_data = {
+            "tmx_map": tmx_map,
+            "level_frames": level_frames,
+            "audio_files": audio_files,
+            "data": data,
+            "switch_stage": switch_stage,
+        }
 
         self.setup(tmx_map, level_frames, audio_files)
 
@@ -87,15 +97,37 @@ class Level:
         # objects
         for obj in tmx_map.get_layer_by_name('Objects'):
             if obj.name == 'player':
-                self.player = Player(
-                    pos=(obj.x, obj.y),
-                    groups=self.all_sprites,
-                    collision_sprites=self.collision_sprites,
-                    sem_collision_sprites=self.sem_collision_sprites,
-                    frames=level_frames['player'],
-                    data=self.data,
-                    attack_sound=audio_files['attack'],
-                    jump_sound=audio_files['jump'])
+                if self.saved_player_state:
+                    # Nếu có trạng thái đã lưu, khôi phục player từ vị trí đã lưu
+                    self.player = Player(
+                        pos=(self.saved_player_state['pos'][0] - TILE_SIZE / 2,
+                             self.saved_player_state['pos'][1] - TILE_SIZE / 2),
+                        groups=self.all_sprites,
+                        collision_sprites=self.collision_sprites,
+                        sem_collision_sprites=self.sem_collision_sprites,
+                        frames=level_frames['player'],
+                        data=self.data,
+                        attack_sound=audio_files['attack'],
+                        jump_sound=audio_files['jump'],
+                        paused = self.paused
+                    )
+                    # Khôi phục các thuộc tính khác như velocity, health, facing_right nếu cần
+                    self.player.velocity = self.saved_player_state['velocity']
+                    self.player.health = self.saved_player_state['health']
+                    self.player.facing_right = self.saved_player_state['facing_right']
+                else:
+                    # Nếu không có trạng thái đã lưu, tạo player mới từ vị trí mặc định
+                    self.player = Player(
+                        pos=(obj.x, obj.y),
+                        groups=self.all_sprites,
+                        collision_sprites=self.collision_sprites,
+                        sem_collision_sprites=self.sem_collision_sprites,
+                        frames=level_frames['player'],
+                        data=self.data,
+                        attack_sound=audio_files['attack'],
+                        jump_sound=audio_files['jump'],
+                        paused = self.paused
+                    )
             else:
                 if obj.name in ('barrel', 'crate'):
                     Sprite((obj.x, obj.y), obj.image, (self.all_sprites, self.collision_sprites))
@@ -254,9 +286,75 @@ class Level:
         if self.player.hitbox_rect.colliderect(self.level_finish_rect):
             self.switch_stage('overworld', self.level_unlock)
 
-    def run(self, dt):
-        self.display_surface.fill('black')
+    def show_pause_menu(self):
+        # Create a surface for the pause menu
+        pause_menu_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+        pause_menu_surface.set_alpha(128)  # Semi-transparent
+        pause_menu_surface.fill('BLACK')
 
+        # Create menu text using Pygame font rendering
+        font = pygame.font.Font(None, 36)  # Use a font (None means the default)
+        resume_text = font.render('Press R to resume', True, (255, 255, 255))
+        quit_text = font.render('Press Q to quit', True, (255, 255, 255))
+        overworld_text = font.render('Press O to go to overworld', True, (255, 255, 255))
+
+        # Positions for the text
+        resume_rect = resume_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3))
+        quit_rect = quit_text.get_rect(center=(WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT// 3))
+        overworld_rect = overworld_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+
+        # Draw the menu background and text
+        self.display_surface.blit(pause_menu_surface, (0, 0))  # Blit semi-transparent surface
+        self.display_surface.blit(resume_text, resume_rect)
+        self.display_surface.blit(quit_text, quit_rect)
+        self.display_surface.blit(overworld_text, overworld_rect)
+
+        pygame.display.update()
+
+        # Menu event loop
+        while self.paused:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:  # Resume game
+                        self.resume_game()
+                    if event.key == pygame.K_q:  # Quit game
+                        pygame.quit()
+                        sys.exit()
+                    if event.key == pygame.K_o:  # Go to overworld
+                        self.switch_stage('overworld', 0)
+                        self.paused = False  # Exit pause menu
+
+    def resume_game(self):
+        # Resume the game and go back to the current level
+        self.paused = False
+        self.switch_stage('level', self.saved_level, self.saved_player_state)
+
+    def pause_game(self):
+        # Save the game state and show the pause menu
+        self.paused = True
+        self.saved_player_state = {
+            'pos': self.player.hitbox_rect.topleft,
+            'velocity': self.player.speed,
+            'health': self.player.data.health,
+            'facing_right': self.player.facing_right,
+        }
+        self.saved_level = self.data.current_level
+        self.show_pause_menu()
+
+
+
+    def run(self, dt):
+        # Example game loop with pause functionality
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE] and not self.paused:
+            self.pause_game()
+        if self.paused:
+            return  # If game is paused, do not update anything else
+        # Continue the rest of the game logic if not paused
+        self.display_surface.fill('black')
         self.all_sprites.update(dt)
         self.pearl_collision()
         self.hit_collision()
