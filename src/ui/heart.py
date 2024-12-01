@@ -1,6 +1,6 @@
-from Pygame.src.Sprite.animatedSprite import AnimatedSprite
+from Sprite.animatedSprite import AnimatedSprite
 from random import randint
-from Pygame.src.setUp.settings import *
+from setUp.settings import *
 
 
 class Heart(AnimatedSprite):

@@ -1,11 +1,11 @@
 from random import randint
-from Pygame.src.Sprite.animatedSprite import AnimatedSprite
-from Pygame.src.Sprite.pathSprite import PathSprite
-from Pygame.src.Sprite.sprites import Sprite
-from Pygame.src.setUp.settings import *
-from Pygame.src.Sprite.worldSprites import WorldSprites
-from Pygame.src.Sprite.node import Node
-from Pygame.src.Sprite.icon import Icon
+from Sprite.animatedSprite import AnimatedSprite
+from Sprite.pathSprite import PathSprite
+from Sprite.sprites import Sprite
+from setUp.settings import *
+from Sprite.worldSprites import WorldSprites
+from Sprite.node import Node
+from Sprite.icon import Icon
 
 
 class Overworld:

@@ -1,16 +1,16 @@
 from random import uniform
-from Pygame.src.Sprite.movingSprite import MovingSprite
-from Pygame.src.Sprite.particleEffectSprite import ParticleEffectSprite
-from Pygame.src.enemies.Pearl import Pearl
-from Pygame.src.setUp.settings import *
-from Pygame.src.Sprite.sprites import Sprite
-from Pygame.src.objPlay.player import Player
-from Pygame.src.Sprite.groups import AllSprites
-from Pygame.src.Sprite.animatedSprite import AnimatedSprite
-from Pygame.src.Sprite.spike import Spike
-from Pygame.src.enemies.Tooth import Tooth
-from Pygame.src.enemies.Shell import Shell
-from Pygame.src.Sprite.item import Item
+from Sprite.movingSprite import MovingSprite
+from Sprite.particleEffectSprite import ParticleEffectSprite
+from enemies.Pearl import Pearl
+from setUp.settings import *
+from  Sprite.sprites import Sprite
+from objPlay.player import Player
+from Sprite.groups import AllSprites
+from Sprite.animatedSprite import AnimatedSprite
+from Sprite.spike import Spike
+from enemies.Tooth import Tooth
+from enemies.Shell import Shell
+from Sprite.item import Item
 
 class Level:
     def __init__(self, tmx_map, level_frames, audio_files, data, switch_stage, saved):
@@ -19,6 +19,7 @@ class Level:
         self.switch_stage = switch_stage
         self.paused = False
         self.saved_player_state = saved
+        
 
         # level data
         self.level_width = tmx_map.width * TILE_SIZE
@@ -287,7 +288,7 @@ class Level:
             self.switch_stage('overworld', self.level_unlock)
 
     def show_pause_menu(self):
-        # Create a surface for the pause menu
+    # Create a surface for the pause menu
         pause_menu_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
         pause_menu_surface.set_alpha(128)  # Semi-transparent
         pause_menu_surface.fill('BLACK')
@@ -300,7 +301,7 @@ class Level:
 
         # Positions for the text
         resume_rect = resume_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3))
-        quit_rect = quit_text.get_rect(center=(WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT// 3))
+        quit_rect = quit_text.get_rect(center=(WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3))
         overworld_rect = overworld_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
 
         # Draw the menu background and text
@@ -311,27 +312,30 @@ class Level:
 
         pygame.display.update()
 
-        # Menu event loop
+    # Menu event loop
+        self.player.paused = True
         while self.paused:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_r:  # Resume game
+                    if event.key == pygame.K_r:
                         self.resume_game()
-                    if event.key == pygame.K_q:  # Quit game
+                    elif event.key == pygame.K_q:
                         pygame.quit()
                         sys.exit()
-                    if event.key == pygame.K_o:  # Go to overworld
-                        self.switch_stage('overworld', 0)
-                        self.paused = False  # Exit pause menu
+                    elif event.key == pygame.K_o:
+                        self.switch_stage('overworld', -1)
 
     def resume_game(self):
         # Resume the game and go back to the current level
         self.paused = False
         self.switch_stage('level', self.saved_level, self.saved_player_state)
 
+    def get_pause(self):
+        return self.paused
+    
     def pause_game(self):
         # Save the game state and show the pause menu
         self.paused = True

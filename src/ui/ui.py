@@ -1,9 +1,9 @@
 from random import randint
 
-from Pygame.src.Sprite.animatedSprite import AnimatedSprite
-from Pygame.src.setUp.settings import *
-from Pygame.src.setUp.timer import Timer
-from Pygame.src.ui.heart import Heart
+from Sprite.animatedSprite import AnimatedSprite
+from setUp.settings import *
+from setUp.timer import Timer
+from ui.heart import Heart
 
 
 class UI:

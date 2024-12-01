@@ -1,6 +1,6 @@
 import pygame
-from Pygame.src.setUp.settings import *
-from Pygame.src.setUp.timer import Timer
+from setUp.settings import *
+from setUp.timer import Timer
 
 
 class Shell(pygame.sprite.Sprite):

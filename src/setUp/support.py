@@ -1,4 +1,4 @@
-from Pygame.src.setUp.settings import *
+from setUp.settings import *
 from os import walk
 from os.path import join
 

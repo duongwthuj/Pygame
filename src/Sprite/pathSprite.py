@@ -1,5 +1,5 @@
-from Pygame.src.Sprite.sprites import Sprite
-from Pygame.src.setUp.settings import *
+from  Sprite.sprites import Sprite
+from  setUp.settings import *
 
 
 class PathSprite(Sprite):

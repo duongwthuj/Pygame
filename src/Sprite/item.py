@@ -1,5 +1,5 @@
-from Pygame.src.Sprite.animatedSprite import AnimatedSprite
-from Pygame.src.setUp.settings import *
+from Sprite.animatedSprite import AnimatedSprite
+from setUp.settings import *
 
 
 class Item(AnimatedSprite):

@@ -1,4 +1,4 @@
-from Pygame.src.setUp.settings import *
+from setUp.settings import *
 
 
 class Node(pygame.sprite.Sprite):

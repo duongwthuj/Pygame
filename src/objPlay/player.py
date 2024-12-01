@@ -1,5 +1,5 @@
-from Pygame.src.setUp.settings import *
-from Pygame.src.setUp.timer import Timer
+from setUp.settings import *
+from setUp.timer import Timer
 from math import sin
 
 
@@ -223,10 +223,10 @@ class Player(pygame.sprite.Sprite):
         self.update_timers()
 
         self.input()
-        print(self.gravity)
-        if not self.paused:
-            self.move(dt)
-            self.platform_move(dt)
+        # print(self.gravity)
+        # if not self.paused:
+        self.move(dt)
+        self.platform_move(dt)
         self.check_contact()
 
         self.get_state()

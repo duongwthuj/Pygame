@@ -1,6 +1,6 @@
-from Pygame.src.setUp.settings import *
+from setUp.settings import *
 from random import choice
-from Pygame.src.setUp.timer import Timer
+from setUp.timer import Timer
 
 
 class Tooth(pygame.sprite.Sprite):

@@ -1,8 +1,8 @@
-from Pygame.src.Sprite.sprites import Sprite
-from Pygame.src.setUp.settings import *
+from Sprite.sprites import Sprite
+from setUp.settings import *
 from random import choice, randint
-from Pygame.src.Sprite.clouds import Cloud
-from Pygame.src.setUp.timer import Timer
+from Sprite.clouds import Cloud
+from setUp.timer import Timer
 
 
 class AllSprites(pygame.sprite.Group):
