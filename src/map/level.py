@@ -11,6 +11,8 @@ from Sprite.spike import Spike
 from enemies.Tooth import Tooth
 from enemies.Shell import Shell
 from Sprite.item import Item
+from showmenu import show
+from showmenupause import showMenuPause
 
 class Level:
     def __init__(self, tmx_map, level_frames, audio_files, data, switch_stage, saved):
@@ -19,6 +21,8 @@ class Level:
         self.switch_stage = switch_stage
         self.paused = False
         self.saved_player_state = saved
+        self.show_menu_when_pause = False
+        self.show_menu_pause = showMenuPause()
         
 
         # level data
@@ -287,77 +291,21 @@ class Level:
         if self.player.hitbox_rect.colliderect(self.level_finish_rect):
             self.switch_stage('overworld', self.level_unlock)
 
-    def show_pause_menu(self):
-    # Create a surface for the pause menu
-        pause_menu_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pause_menu_surface.set_alpha(128)  # Semi-transparent
-        pause_menu_surface.fill('BLACK')
-
-        # Create menu text using Pygame font rendering
-        font = pygame.font.Font(None, 36)  # Use a font (None means the default)
-        resume_text = font.render('Press R to resume', True, (255, 255, 255))
-        quit_text = font.render('Press Q to quit', True, (255, 255, 255))
-        overworld_text = font.render('Press O to go to overworld', True, (255, 255, 255))
-
-        # Positions for the text
-        resume_rect = resume_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3))
-        quit_rect = quit_text.get_rect(center=(WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3))
-        overworld_rect = overworld_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
-
-        # Draw the menu background and text
-        self.display_surface.blit(pause_menu_surface, (0, 0))  # Blit semi-transparent surface
-        self.display_surface.blit(resume_text, resume_rect)
-        self.display_surface.blit(quit_text, quit_rect)
-        self.display_surface.blit(overworld_text, overworld_rect)
-
-        pygame.display.update()
-
-    # Menu event loop
-        self.player.paused = True
-        while self.paused:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_r:
-                        self.resume_game()
-                    elif event.key == pygame.K_q:
-                        pygame.quit()
-                        sys.exit()
-                    elif event.key == pygame.K_o:
-                        self.switch_stage('overworld', -1)
-
-    def resume_game(self):
-        # Resume the game and go back to the current level
-        self.paused = False
-        self.switch_stage('level', self.saved_level, self.saved_player_state)
-
-    def get_pause(self):
-        return self.paused
-    
-    def pause_game(self):
-        # Save the game state and show the pause menu
-        self.paused = True
-        self.saved_player_state = {
-            'pos': self.player.hitbox_rect.topleft,
-            'velocity': self.player.speed,
-            'health': self.player.data.health,
-            'facing_right': self.player.facing_right,
-        }
-        self.saved_level = self.data.current_level
-        self.show_pause_menu()
+   
 
 
 
     def run(self, dt):
-        # Example game loop with pause functionality
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE] and not self.paused:
-            self.pause_game()
+        show_menu_pause = showMenuPause()
+        if keys[pygame.K_ESCAPE]:
+            self.show_menu_when_pause = True
+            self.show_menu_pause.pause_game()
+        level_current = self.level_data
+        if self.show_menu_pause.get_overworldback():
+            self.switch_stage('overworld', -1)
         if self.paused:
-            return  # If game is paused, do not update anything else
-        # Continue the rest of the game logic if not paused
+            return 
         self.display_surface.fill('black')
         self.all_sprites.update(dt)
         self.pearl_collision()
