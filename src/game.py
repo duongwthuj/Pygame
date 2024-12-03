@@ -10,6 +10,7 @@ from ui.ui import UI
 from map.menu import Menu, aboutMenu, tutorialMenu
 from gameover import Over
 from showmenu import show
+from win import Win
 
 
 class Game:
@@ -24,6 +25,8 @@ class Game:
 
         self.ui = UI(self.font, self.ui_frames)
         self.data = Data(self.ui)
+        
+        self.playAgain = False
 
         self.tmx_overworld = load_pygame(join( 'data', 'overworld', 'overworld.tmx'))
         self.tmx_maps = {
@@ -44,8 +47,9 @@ class Game:
         if target == 'level':
             self.current_stage = Level(self.tmx_maps[self.data.current_level], self.level_frames, self.audio_files,
                                        self.data, self.switch_stage, saved_pos)
-            # goi ham get_pause tu Level
-            # self.paused = self.current_stage.get_pause()
+        
+            
+            
             
         elif target == 'menu':
             self.show_menu()
@@ -58,26 +62,6 @@ class Game:
         else:
             pygame.quit()
             sys.exit()
-
-    # def show_menu(self):
-    #     menu = Menu()
-    #     menu.run()
-        
-    #     if menu.selected_action == "Play":
-    #         self.switch_stage('overworld', 0)
-    #     elif menu.selected_action == "Quit":
-    #         pygame.quit()
-    #         sys.exit()
-    #     elif menu.selected_action == "About":
-    #         about_menu = aboutMenu()
-    #         about_menu.run()
-    #         if about_menu.back:
-    #             self.show_menu()
-    #     elif menu.selected_action == "Tutorial":
-    #         tutorial_menu = tutorialMenu()
-    #         tutorial_menu.run()
-    #         if tutorial_menu.back:
-    #             self.show_menu()
 
     def import_assets(self):
         self.level_frames = {
@@ -146,7 +130,19 @@ class Game:
         elif game_over.selected_action == "Quit":
             pygame.quit()
             
-         
+    def check_win(self):
+        if all(self.data.level_finished):
+            return True
+    
+    
+    def win(self):
+        win = Win()
+        win.run()
+        if win.selected_action == "Play Again":
+            self.playAgain = True
+        elif win.selected_action == "Quit":
+            pygame.quit()
+    
 
     def run(self):
         showMenu = show()
@@ -154,17 +150,23 @@ class Game:
         if showMenu.get_overworld():
             self.switch_stage('overworld')
         while True:
-            dt = self.clock.tick(60) / 1000  # Đảm bảo FPS không quá nhanh (60 FPS)
+            dt = self.clock.tick() / 1000  # Đảm bảo FPS không quá nhanh (60 FPS)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             
-            if self.data.health <= 0:
+            if self.data.health <= 0: 
                 self.gameOver()
+            
+            if self.check_win():
+                self.win()
+                if self.playAgain:
+                    showMenu.showMenuAction()
+                    for i in range(6):
+                        self.data.level_finished[i] = False
             self.current_stage.run(dt)  # Chạy màn chơi hiện tại
             self.ui.update(dt)  # Cập nhật UI
-
             pygame.display.update()  # Cập nhật màn hình
     
 

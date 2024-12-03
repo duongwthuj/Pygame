@@ -24,6 +24,7 @@ class Level:
         self.show_menu_when_pause = False
         self.show_menu_pause = showMenuPause()
         
+        
 
         # level data
         self.level_width = tmx_map.width * TILE_SIZE
@@ -101,7 +102,7 @@ class Level:
 
         # objects
         for obj in tmx_map.get_layer_by_name('Objects'):
-            if obj.name == 'player':
+            if obj.name == 'player' and not self.paused:
                 if self.saved_player_state:
                     # Nếu có trạng thái đã lưu, khôi phục player từ vị trí đã lưu
                     self.player = Player(
@@ -155,6 +156,7 @@ class Level:
                     AnimatedSprite((obj.x, obj.y), frames, groups, z, animation_speed)
             if obj.name == 'flag':
                 self.level_finish_rect = pygame.Rect((obj.x, obj.y), (obj.width, obj.height))
+                
 
         # moving objects
         for obj in tmx_map.get_layer_by_name('Moving Objects'):
@@ -276,6 +278,7 @@ class Level:
             if target.rect.colliderect(self.player.rect) and self.player.attacking and facing_target:
                 target.reverse()
 
+
     def check_constraint(self):
         # left right
         if self.player.hitbox_rect.left <= 0:
@@ -289,23 +292,26 @@ class Level:
 
         # success
         if self.player.hitbox_rect.colliderect(self.level_finish_rect):
+            self.data.coins += 50
+            if self.data.current_level != 5:
+                self.data.level_finished[self.data.current_level] = True
             self.switch_stage('overworld', self.level_unlock)
-
+        
    
-
-
-
+                
     def run(self, dt):
+        
         keys = pygame.key.get_pressed()
         show_menu_pause = showMenuPause()
+        # self.paused = show_menu_pause
         if keys[pygame.K_ESCAPE]:
             self.show_menu_when_pause = True
             self.show_menu_pause.pause_game()
-        level_current = self.level_data
+        level_current = self.data.current_level
         if self.show_menu_pause.get_overworldback():
-            self.switch_stage('overworld', -1)
-        if self.paused:
-            return 
+            self.switch_stage('overworld', level_current)
+        # if self.paused:
+        #     return 
         self.display_surface.fill('black')
         self.all_sprites.update(dt)
         self.pearl_collision()
@@ -314,4 +320,6 @@ class Level:
         self.attack_collision()
         self.check_constraint()
 
-        self.all_sprites.draw(self.player.hitbox_rect.center, dt)
+        if not self.paused:
+            self.all_sprites.draw(self.player.hitbox_rect.center, dt)
+        

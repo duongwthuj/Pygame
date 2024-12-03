@@ -9,7 +9,8 @@ class Menu:
     def __init__(self):
         # Tạo màn hình hiển thị
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pygame.display.set_caption("Main Menu")
+        pygame.display.set_caption("Treasure Hunter")
+        pygame.display.set_icon(pygame.image.load(join('graphics', 'ui', 'logo.png')))
         
         # Font và nút
         self.font = pygame.font.Font(join('graphics', 'ui', 'runescape_uf.ttf'), 50)

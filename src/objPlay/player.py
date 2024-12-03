@@ -1,6 +1,7 @@
 from setUp.settings import *
 from setUp.timer import Timer
 from math import sin
+from showmenupause import showMenuPause
 
 
 class Player(pygame.sprite.Sprite):
@@ -10,6 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.z = Z_LAYER['main']
         self.data = data
         self.paused = paused
+        pause = showMenuPause().get_pause()
 
         # image
         self.frames, self.frame_index = frames, 0
@@ -219,16 +221,17 @@ class Player(pygame.sprite.Sprite):
             self.image = white_surf
 
     def update(self, dt):
-        self.old_rect = self.hitbox_rect.copy()
-        self.update_timers()
+        if not self.paused:
+            self.old_rect = self.hitbox_rect.copy()
+            self.update_timers()
 
-        self.input()
-        # print(self.gravity)
-        # if not self.paused:
-        self.move(dt)
-        self.platform_move(dt)
-        self.check_contact()
+            self.input()
+            # print(self.gravity)
+            # if not self.paused:
+            self.move(dt)
+            self.platform_move(dt)
+            self.check_contact()
 
-        self.get_state()
-        self.animate(dt)
-        self.flicker()
+            self.get_state()
+            self.animate(dt)
+            self.flicker()

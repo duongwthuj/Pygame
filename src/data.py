@@ -2,8 +2,9 @@ class Data:
 	def __init__(self, ui):
 		self.ui = ui
 		self._coins = 0
-		self._health = 5
+		self._health =5
 		self.ui.create_hearts(self._health)
+		self.level_finished = [False, False, False, False, False, False]
 
 		self.unlocked_level = 0
 		self.current_level = 0
